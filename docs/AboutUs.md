@@ -9,7 +9,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### (Art) Supachod Trakansirorut
+### Supachod Trakansirorut (Art)
 
 <img src="images/spchdt.png" width="200px">
 
