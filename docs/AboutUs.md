@@ -9,31 +9,28 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### John Doe
+### Supachod Trakansirorut (Art)
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/spchdt.png" width="200px">
 
-[[homepage](http://www.comp.nus.edu.sg/~damithch)]
-[[github](https://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/Spchdt)]
 
-* Role: Project Advisor
+* Role: Developer
 
-### Zheng Junwei
+### Zheng Junwei 
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/junwezheng.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/junwezheng)]
 
 * Role: Team Lead
 * Responsibilities: UI
 
-### Zhangkai
+### ZhangKai
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/nodeeeeee.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](http://github.com/johndoe)]
 
 * Role: Developer
 * Responsibilities: Data
