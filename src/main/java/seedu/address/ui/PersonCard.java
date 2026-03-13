@@ -68,7 +68,8 @@ public class PersonCard extends UiPart<Region> {
         address.setText(person.getAddress().value);
         email.setText(person.getEmail().value);
         majors.setText(person.getMajors().stream().map(m -> m.value).collect(Collectors.joining(", ")));
-        availableHours.setText(person.getAvailableHours().stream().map(a -> a.toOriginalString()).collect(Collectors.joining(", ")));
+        availableHours.setText(person.getAvailableHours().stream()
+                .map(a -> a.toOriginalString()).collect(Collectors.joining(", ")));
         groups.setText(person.getGroups().stream().map(g -> g.value).collect(Collectors.joining(", ")));
         positions.setText(person.getPositions().stream().map(p -> p.value).collect(Collectors.joining(", ")));
         person.getTags().stream()
