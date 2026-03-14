@@ -11,15 +11,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import seedu.address.model.person.AvailableHours;
 import seedu.address.model.person.Person;
 
 /**
- * An UI component that displays information of a {@code Person}.
+ * A UI component that displays information of a {@code Person}.
  */
 public class PersonCard extends UiPart<Region> {
 
     private static final String FXML = "PersonListCard.fxml";
-
+    private static final String EMPTY_FIELD_MESSAGE = "N/A";
     /**
      * Note: Certain keywords such as "location" and "resources" are reserved keywords in JavaFX.
      * As a consequence, UI elements' variable names cannot be set to such keywords
@@ -49,8 +50,6 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private FlowPane tags;
     @FXML
-    private FlowPane groups;
-    @FXML
     private Button deleteButton;
     @FXML
     private Label majors;
@@ -75,28 +74,19 @@ public class PersonCard extends UiPart<Region> {
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
         email.setText(person.getEmail().value);
-        majors.setText(person.getMajors().stream().map(m -> m.value).collect(Collectors.joining(", ")));
-        availableHours.setText(person.getAvailableHours().stream()
-                .map(a -> a.toOriginalString()).collect(Collectors.joining(", ")));
-        groups.setText(person.getGroups().stream().map(g -> g.value).collect(Collectors.joining(", ")));
-        positions.setText(person.getPositions().stream().map(p -> p.value).collect(Collectors.joining(", ")));
+        String majorsText = person.getMajors().stream().map(m -> m.value).collect(Collectors.joining(", "));
+        majors.setText("Major: " + (majorsText.isEmpty() ? EMPTY_FIELD_MESSAGE : majorsText));
+        String availableHoursText = person.getAvailableHours().stream()
+                .map(AvailableHours::toString).collect(Collectors.joining(", "));
+        availableHours.setText("Available hours: "
+                + (availableHoursText.isEmpty() ? EMPTY_FIELD_MESSAGE : availableHoursText));
+        String groupsText = person.getGroups().stream().map(g -> g.value).collect(Collectors.joining(", "));
+        groups.setText("Group: " + (groupsText.isEmpty() ? EMPTY_FIELD_MESSAGE : groupsText));
+        String positionsText = person.getPositions().stream().map(p -> p.value).collect(Collectors.joining(", "));
+        positions.setText("Position: " + (positionsText.isEmpty() ? EMPTY_FIELD_MESSAGE : positionsText));
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
-        addGroupLabels(person);
-    }
-
-    /**
-     * Adds group labels to the card in a sorted order.
-     */
-    private void addGroupLabels(Person person) {
-        person.getGroups().stream()
-                .sorted(Comparator.comparing(group -> group.value))
-                .forEach(group -> {
-                    Label label = new Label(group.value);
-                    label.getStyleClass().add("group-tag");
-                    groups.getChildren().add(label);
-                });
     }
 
     /**
