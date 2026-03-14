@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_FLAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_AVAILABLE_HOURS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -20,6 +21,7 @@ import java.util.Set;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
+import seedu.address.logic.commands.EditFlag;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.AvailableHours;
 import seedu.address.model.person.Group;
@@ -32,6 +34,9 @@ import seedu.address.model.tag.Tag;
  */
 public class EditCommandParser implements Parser<EditCommand> {
 
+    private static final String FLAG_APPEND = "-a";
+    private static final String FLAG_RESET = "-r";
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditCommand
      * and returns an EditCommand object for execution.
@@ -39,6 +44,14 @@ public class EditCommandParser implements Parser<EditCommand> {
      */
     public EditCommand parse(String args) throws ParseException {
         requireNonNull(args);
+
+        args = args.trim();
+        EditFlag flag = EditFlag.NONE;
+        if (args.startsWith("-")) {
+            flag = parseEditFlag(args);
+            args = args.substring(2);
+        }
+
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
                         PREFIX_AVAILABLE_HOURS, PREFIX_POSITION, PREFIX_MAJOR, PREFIX_GROUP);
@@ -55,6 +68,7 @@ public class EditCommandParser implements Parser<EditCommand> {
                 PREFIX_ADDRESS, PREFIX_AVAILABLE_HOURS);
 
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
+        editPersonDescriptor.setEditFlag(flag);
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
             editPersonDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
@@ -80,6 +94,17 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         return new EditCommand(index, editPersonDescriptor);
+    }
+
+    private EditFlag parseEditFlag(String args) throws ParseException {
+        args = args.trim();
+        if (args.startsWith(FLAG_APPEND)) {
+            return EditFlag.APPEND;
+        } else if (args.startsWith(FLAG_RESET)) {
+            return EditFlag.RESET;
+        } else {
+            throw new ParseException(String.format(MESSAGE_INVALID_FLAG, EditCommand.MESSAGE_USAGE));
+        }
     }
 
     /**
