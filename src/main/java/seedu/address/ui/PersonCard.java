@@ -73,7 +73,8 @@ public class PersonCard extends UiPart<Region> {
         this.displayedIndex = displayedIndex;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
-        String initials = person.getName().fullName.trim().isEmpty() ? "" : person.getName().fullName.trim().substring(0, 1).toUpperCase();
+        String fullName = person.getName().fullName.trim();
+        String initials = fullName.isEmpty() ? "" : fullName.substring(0, 1).toUpperCase();
         avatarInitial.setText(initials);
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
