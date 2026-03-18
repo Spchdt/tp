@@ -44,8 +44,9 @@ public class EditCommand extends Command {
     public static final String COMMAND_WORD = "edit";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the person identified "
-            + "by the index number used in the displayed person list. "
-            + "Existing values will be overwritten by the input values.\n"
+            + "by the index number used in the displayed person list.\n"
+            + "Flags: -a for adding fields to existing values, -r for overwriting existing values.\n"
+            + "By default existing values will be overwritten, unless -a is used as flag.\n"
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_PHONE + "PHONE] "
@@ -111,16 +112,33 @@ public class EditCommand extends Command {
         Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
         Email updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
-        Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
-        Set<Major> updatedMajors = editPersonDescriptor.getMajors().orElse(personToEdit.getMajors());
-        Set<Group> updatedGroups = editPersonDescriptor.getGroups().orElse(personToEdit.getGroups());
-        Set<Position> updatedPositions = editPersonDescriptor.getPositions().orElse(personToEdit.getPositions());
         Set<AvailableHours> updatedAvailableHours =
                 editPersonDescriptor.getAvailableHours().orElse(personToEdit.getAvailableHours());
 
+        if (editPersonDescriptor.isAppendFlag()) {
+            Set<Tag> updatedTags = new HashSet<>(personToEdit.getTags());
+            editPersonDescriptor.getTags().ifPresent(updatedTags::addAll);
 
-        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags, updatedPositions,
-                updatedMajors, updatedGroups, updatedAvailableHours);
+            Set<Major> updatedMajors = new HashSet<>(personToEdit.getMajors());
+            editPersonDescriptor.getMajors().ifPresent(updatedMajors::addAll);
+
+            Set<Group> updatedGroups = new HashSet<>(personToEdit.getGroups());
+            editPersonDescriptor.getGroups().ifPresent(updatedGroups::addAll);
+
+            Set<Position> updatedPositions = new HashSet<>(personToEdit.getPositions());
+            editPersonDescriptor.getPositions().ifPresent(updatedPositions::addAll);
+
+            return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags, updatedPositions,
+                    updatedMajors, updatedGroups, updatedAvailableHours);
+        } else {
+            Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
+            Set<Major> updatedMajors = editPersonDescriptor.getMajors().orElse(personToEdit.getMajors());
+            Set<Group> updatedGroups = editPersonDescriptor.getGroups().orElse(personToEdit.getGroups());
+            Set<Position> updatedPositions = editPersonDescriptor.getPositions().orElse(personToEdit.getPositions());
+
+            return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags, updatedPositions,
+                    updatedMajors, updatedGroups, updatedAvailableHours);
+        }
     }
 
     @Override
@@ -161,6 +179,7 @@ public class EditCommand extends Command {
         private Set<Position> positions;
         private Set<Group> groups;
         private Set<AvailableHours> availableHours;
+        private EditFlag flag = EditFlag.NONE;
 
         public EditPersonDescriptor() {}
 
@@ -178,6 +197,7 @@ public class EditCommand extends Command {
             setMajors(toCopy.majors);
             setGroups(toCopy.groups);
             setAvailableHours(toCopy.availableHours);
+            setEditFlag(toCopy.flag);
         }
 
         /**
@@ -218,6 +238,14 @@ public class EditCommand extends Command {
 
         public Optional<Address> getAddress() {
             return Optional.ofNullable(address);
+        }
+
+        public void setEditFlag(EditFlag flag) {
+            this.flag = flag;
+        }
+
+        public Optional<EditFlag> getEditFlag() {
+            return Optional.ofNullable(flag);
         }
 
         /**
@@ -307,6 +335,13 @@ public class EditCommand extends Command {
                     : Optional.empty();
         }
 
+        /**
+         * Returns whether this command has <code>APPEND</code> flag.
+         */
+        public boolean isAppendFlag() {
+            return this.flag.equals(EditFlag.APPEND);
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -327,7 +362,8 @@ public class EditCommand extends Command {
                     && Objects.equals(groups, otherEditPersonDescriptor.groups)
                     && Objects.equals(majors, otherEditPersonDescriptor.majors)
                     && Objects.equals(positions, otherEditPersonDescriptor.positions)
-                    && Objects.equals(availableHours, otherEditPersonDescriptor.availableHours);
+                    && Objects.equals(availableHours, otherEditPersonDescriptor.availableHours)
+                    && Objects.equals(flag, otherEditPersonDescriptor.flag);
         }
 
         @Override
